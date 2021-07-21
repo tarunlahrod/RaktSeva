@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "792399938813",
+    "project_id": "rakt-seva-a7938",
+    "storage_bucket": "rakt-seva-a7938.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:792399938813:android:947a1eea01ab298a2b6a94",
+        "android_client_info": {
+          "package_name": "com.example.raktseva"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "792399938813-0pehddubgrtam4nmb0e65qh7iiao3alr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7WqpxYeQrA1u5q0M929gjLN24Och3Vkk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "792399938813-0pehddubgrtam4nmb0e65qh7iiao3alr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
