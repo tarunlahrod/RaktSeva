@@ -38,12 +38,18 @@ public class MainMenuActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.menu_item_sign_out) {
-            FirebaseAuth.getInstance().signOut();
-            Toast.makeText(MainMenuActivity.this, "Signed out", Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(MainMenuActivity.this,MainActivity.class);
-            startActivity(i);
-            finish();
+        switch (item.getItemId()) {
+            case R.id.menu_item_sign_out:
+                FirebaseAuth.getInstance().signOut();
+                Toast.makeText(MainMenuActivity.this, "Signed out", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(MainMenuActivity.this,MainActivity.class);
+                startActivity(i);
+                finish();
+                break;
+
+            case R.id.menu_item_about:
+                startActivity(new Intent(MainMenuActivity.this, AboutActivity.class));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }

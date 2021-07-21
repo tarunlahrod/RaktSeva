@@ -1,5 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Rakt Seva</string>
     <string name="app_about_description">Android application for people seeking Blood for Donation.</string>
     <string name="app_about_made_by">from Tarun Lahrod with ❤</string>
 </resources>
