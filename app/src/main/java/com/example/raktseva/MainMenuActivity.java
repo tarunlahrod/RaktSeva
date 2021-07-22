@@ -90,12 +90,15 @@ public class MainMenuActivity extends AppCompatActivity {
             case R.id.menu_item_about:
                 startActivity(new Intent(MainMenuActivity.this, AboutActivity.class));
                 break;
+
+            case R.id.menu_item_user_profile:
+                startActivity(new Intent(MainMenuActivity.this, UserProfileActivity.class));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
 
     public void inputDetails(View view) {
         startActivity(new Intent(this, GetUserDetailsActivity.class));
-        finish();
     }
 }

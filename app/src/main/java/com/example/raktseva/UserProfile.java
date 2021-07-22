@@ -8,18 +8,19 @@ public class UserProfile {
     private String bloodGroup;
     private String phoneNumber;
     private int age;
-    private String address;
-
+    private String state;
+    private String gender;
     public UserProfile() {
 
     }
 
-    public UserProfile(String name, String bloodGroup, String phoneNumber, int age, String address) {
+    public UserProfile(String name, String bloodGroup, String phoneNumber, int age, String state, String gender) {
         this.name = name;
         this.bloodGroup = bloodGroup;
         this.phoneNumber = phoneNumber;
         this.age = age;
-        this.address = address;
+        this.state = state;
+        this.gender = gender;
     }
 
     public String getName() {
@@ -54,12 +55,19 @@ public class UserProfile {
         this.age = age;
     }
 
-    public String getAddress() {
-        return address;
+    public String getState() {
+        return state;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setState(String state) {
+        this.state = state;
     }
 
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 }

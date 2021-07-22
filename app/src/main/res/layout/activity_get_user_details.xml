@@ -25,6 +25,57 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
+        android:id="@+id/ll_gender"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/edit_text_box"
+        app:layout_constraintTop_toBottomOf="@+id/et_userName">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Gender"
+            android:textSize="16dp"
+            android:padding="10dp"
+            android:layout_gravity="center"/>
+
+
+        <RadioGroup
+            android:id="@+id/rg_gender"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="4">
+
+            <RadioButton
+                android:id="@+id/rb_male"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="true"
+                android:text="Male"/>
+
+            <RadioButton
+                android:id="@+id/rb_female"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Female"/>
+
+            <RadioButton
+                android:id="@+id/rb_nb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Non Binary"/>
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,27 +88,33 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/et_userName">
+        app:layout_constraintTop_toBottomOf="@+id/ll_gender">
 
         <LinearLayout
+            android:id="@+id/linearLayoutContainer"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginRight="4dp"
             android:layout_weight="1"
             android:background="@drawable/edit_text_box"
-            android:gravity="center">
+            android:paddingLeft="10dp"
+            android:gravity="center|left">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginRight="15dp"
-                android:gravity="center"
-                android:text="Age: "
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:paddingLeft="10dp"
+                android:text="Age"
                 android:textSize="16sp" />
 
             <NumberPicker
                 android:id="@+id/np_age"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="20dp"
                 android:layout_height="wrap_content"
                 tools:layout_editor_absoluteX="128dp"
                 tools:layout_editor_absoluteY="87dp" />
@@ -81,10 +138,9 @@
             <Spinner
                 android:id="@+id/spinner_bloodGroup"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="right"
+                android:layout_height="50dp"
                 android:layout_marginRight="10dp"
-                android:gravity="center"
+                android:layout_gravity="center"
                 android:paddingLeft="15dp"
                 android:textAlignment="center"
                 tools:layout_editor_absoluteX="128dp"
@@ -93,28 +149,36 @@
 
     </LinearLayout>
 
-    <EditText
-        android:id="@+id/et_userAddress"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
+        android:padding="10dp"
         android:background="@drawable/edit_text_box"
-        android:ems="10"
-        android:hint="Residential Address"
-        android:inputType="textMultiLine"
-        android:minLines="5"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:gravity="top|left"
-        android:paddingLeft="15dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.021"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="State"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:textSize="16sp"/>
+
+        <Spinner
+            android:id="@+id/spinner_state"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="3"/>
+
+    </LinearLayout>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,6 +13,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.NumberPicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -25,13 +27,16 @@ import java.util.Arrays;
 
 public class GetUserDetailsActivity extends AppCompatActivity {
 
-    private EditText et_userName, et_userAddress;
+    private EditText et_userName;
     private NumberPicker np_age;
-    private Spinner spinner_bloodGroup;
-    ArrayList<String> bloodGroupList;
-    ArrayAdapter<String> spinnerAdapter;
+    private Spinner spinner_bloodGroup, spinner_state;
+    private RadioGroup rg_gender;
+    private RadioButton rb_gender;
 
-    private String userName, userAddress, userBloodGroup, userPhoneNumber;
+    ArrayList<String> bloodGroupList, stateList;
+    ArrayAdapter<String> bloodGroupSpinnerAdapter, stateSpinnerAdapter;
+
+    private String userName, userState, userBloodGroup, userPhoneNumber, userGender;
     private int userAge;
 
     FirebaseAuth mAuth;
@@ -47,9 +52,10 @@ public class GetUserDetailsActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         et_userName = findViewById(R.id.et_userName);
-        et_userAddress = findViewById(R.id.et_userAddress);
+        spinner_state = findViewById(R.id.spinner_state);
         np_age = findViewById(R.id.np_age);
         spinner_bloodGroup = findViewById(R.id.spinner_bloodGroup);
+        rg_gender = findViewById(R.id.rg_gender);
 
         // setting up the number picker
         np_age.setMinValue(1);
@@ -60,8 +66,8 @@ public class GetUserDetailsActivity extends AppCompatActivity {
         bloodGroupList = new ArrayList<>(Arrays.asList("A+", "O+", "B+", "AB+", "A-", "O-", "B-", "AB-"));
 
         // initializing the adapter for spinner and setting it to the spinner
-        spinnerAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, bloodGroupList);
-        spinner_bloodGroup.setAdapter(spinnerAdapter);
+        bloodGroupSpinnerAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, bloodGroupList);
+        spinner_bloodGroup.setAdapter(bloodGroupSpinnerAdapter);
 
         // on item selected in spinner
         spinner_bloodGroup.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -69,6 +75,27 @@ public class GetUserDetailsActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 // get selected blood group from the spinner
                 userBloodGroup = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        // Adding state to the spinner array
+        stateList = new ArrayList<>(Arrays.asList("Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jammu and Kashmir", "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttarakhand", "Uttar Pradesh", "West Bengal", "Andaman and Nicobar Islands", "Chandigarh", "Dadra and Nagar Haveli", "Daman and Diu", "Delhi", "Lakshadweep", "Puducherry"));
+
+        // initializing the adapter for spinner and setting it up
+        stateSpinnerAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, stateList);
+        spinner_state.setAdapter(stateSpinnerAdapter);
+
+        // on item selected in spinner
+        spinner_state.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // get selected blood group from the spinner
+                userState = parent.getItemAtPosition(position).toString();
             }
 
             @Override
@@ -100,8 +127,7 @@ public class GetUserDetailsActivity extends AppCompatActivity {
         if (allDetailsValid()) {
 
             // proceed to add user
-            UserProfile userProfile = new UserProfile(userName, userBloodGroup, userPhoneNumber, userAge, userAddress);
-
+            UserProfile userProfile = new UserProfile(userName, userBloodGroup, userPhoneNumber, userAge, userState, userGender);
             root = FirebaseDatabase.getInstance();
             reference = root.getReference("users");
             reference.child(userPhoneNumber).setValue(userProfile);
@@ -115,28 +141,22 @@ public class GetUserDetailsActivity extends AppCompatActivity {
         // get user name
         userName = et_userName.getText().toString();
         if (userName.isEmpty()) {
-            makeToast("Enter name");
+            Toast.makeText(this, "Enter name", Toast.LENGTH_SHORT).show();
             return false;
         }
+
+        // get gender
+        int radioId = rg_gender.getCheckedRadioButtonId();
+        rb_gender = findViewById(radioId);
+        userGender = rb_gender.getText().toString();
 
         // get user age
         userAge = np_age.getValue();
-
-        // get user address
-        userAddress = et_userAddress.getText().toString();
-        if (userAddress.isEmpty()) {
-            makeToast("Enter residential address");
-            return false;
-        }
 
         // get user phone number
         userPhoneNumber = mAuth.getCurrentUser().getPhoneNumber();
 
         // if all details are valid, return true and proceed to save data
         return true;
-    }
-
-    private void makeToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
