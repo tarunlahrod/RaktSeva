@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Theme.AppCompat.DayNight.NoActionBar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".UserProfileActivity">
@@ -170,18 +171,18 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:startIconDrawable="@drawable/ic_baseline_android_24"
                 android:layout_marginBottom="10dp"
                 android:hint="Gender">
 
-                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                    android:id="@+id/actv_userGender"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tied_userGender"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawablePadding="10dp"
+                    android:drawableLeft="@drawable/ic_baseline_android_24"
                     android:inputType="none"
                     android:text="User Gender" />
 
@@ -208,13 +209,13 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_marginBottom="10dp"
                 app:startIconDrawable="@drawable/ic_baseline_home_24"
                 android:hint="State">
 
-                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
-                    android:id="@+id/actv_userState"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/tied_userState"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="none"
@@ -223,10 +224,11 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
+                android:id="@+id/btn_updateProfile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/bungee"
-                android:text="Update"/>
+                android:text="Update Profile"/>
 
         </LinearLayout>
     </LinearLayout>

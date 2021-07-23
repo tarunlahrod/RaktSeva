@@ -2,12 +2,19 @@ package com.example.raktseva;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,18 +26,23 @@ import com.google.firebase.database.ValueEventListener;
 
 public class UserProfileActivity extends AppCompatActivity {
 
-    private TextView tv_user_name, tv_user_phone_number, tv_user_blood_group, tv_user_age, tv_user_address;
+    private TextView tv_user_name, tv_user_phone_number, tv_user_blood_group, tv_user_age;
     private ProgressBar pb_profile_loader;
-    private TextInputEditText tied_userName, tied_userPhoneNumber;
-    private AutoCompleteTextView actv_userGender, actv_userState;
+    private TextInputEditText tied_userName, tied_userPhoneNumber, tied_userGender, tied_userState;
+    private Button btn_updateProfile;
+
     FirebaseDatabase root;
     DatabaseReference ref;
+    String userName, userAge, userBloodGroup, userGender, userState, userPhoneNumber;
+    Boolean myProfile;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
         getSupportActionBar().setTitle("Profile");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         tv_user_name = findViewById(R.id.tv_user_name);
         tv_user_phone_number = findViewById(R.id.tv_user_phone_number);
@@ -38,20 +50,46 @@ public class UserProfileActivity extends AppCompatActivity {
         tv_user_age = findViewById(R.id.tv_user_age);
         pb_profile_loader = findViewById(R.id.pb_profile_loader);
         tied_userName = findViewById(R.id.tied_userName);
-        actv_userGender = findViewById(R.id.actv_userGender);
+        tied_userGender = findViewById(R.id.tied_userGender);
         tied_userPhoneNumber = findViewById(R.id.tied_userPhoneNumber);
-        actv_userState = findViewById(R.id.actv_userState);
+        tied_userState = findViewById(R.id.tied_userState);
+        btn_updateProfile = findViewById(R.id.btn_updateProfile);
 
         pb_profile_loader.setVisibility(View.VISIBLE);
 
-        String userPhoneNumber = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
+        // getting the intent to decide what to do, view a someone else's profile or view my own profile
+        Intent intent = getIntent();
+        userPhoneNumber = intent.getStringExtra("userPhoneNumber");
+
+        if (userPhoneNumber != null) {
+            // Someone else's profile, do nothing since we already have the userPhoneNumber
+            // from the received intent. Rest work will be done after the if-else statement
+            myProfile = false;
+
+            // remove the update profile button
+            btn_updateProfile.setVisibility(View.INVISIBLE);
+        }
+        else {
+            // My own profile
+            userPhoneNumber = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
+            myProfile = true;
+        }
+
+        btn_updateProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // move to edit profile activity
+
+            }
+        });
+
         root = FirebaseDatabase.getInstance();
         ref = root.getReference().child("users").child(userPhoneNumber);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    String userName, userAge, userBloodGroup, userGender, userState;
+
                     userName = snapshot.child("name").getValue().toString();
                     userAge = snapshot.child("age").getValue().toString() + " Yrs";
                     userBloodGroup = snapshot.child("bloodGroup").getValue().toString();
@@ -63,9 +101,15 @@ public class UserProfileActivity extends AppCompatActivity {
                     tv_user_age.setText(userAge);
                     tv_user_blood_group.setText(userBloodGroup);
                     tied_userName.setText(userName);
-                    actv_userGender.setText(userGender);
+                    tied_userGender.setText(userGender);
                     tied_userPhoneNumber.setText(userPhoneNumber);
-                    actv_userState.setText(userState);
+                    tied_userState.setText(userState);
+
+                    // making the TextInputEditText behave as TextView
+                    makeEditTextBehaveAsTextView(tied_userName);
+                    makeEditTextBehaveAsTextView(tied_userGender);
+                    makeEditTextBehaveAsTextView(tied_userState);
+                    makeEditTextBehaveAsTextView(tied_userPhoneNumber);
 
                     pb_profile_loader.setVisibility(View.INVISIBLE);
                 }
@@ -76,5 +120,12 @@ public class UserProfileActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void makeEditTextBehaveAsTextView(TextInputEditText textInputEditText) {
+        textInputEditText.setClickable(false);
+        textInputEditText.setFocusable(false);
+        textInputEditText.setTextIsSelectable(false);
+        textInputEditText.setCursorVisible(false);
     }
 }

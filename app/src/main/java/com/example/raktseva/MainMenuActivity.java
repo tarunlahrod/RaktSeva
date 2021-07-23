@@ -148,8 +148,4 @@ public class MainMenuActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    public void inputDetails(View view) {
-        startActivity(new Intent(this, GetUserDetailsActivity.class));
-    }
 }
