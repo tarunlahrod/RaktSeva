@@ -2,9 +2,12 @@ package com.example.raktseva;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,10 +22,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainMenuActivity extends AppCompatActivity {
 
     FirebaseDatabase root;
     DatabaseReference ref;
+
+    List<UserProfile> usersList = new ArrayList<UserProfile>();
+
+    private RecyclerView recyclerView;
+    private RecyclerView.ViewHolder viewHolder;
+    private RecyclerView.Adapter recyclerViewAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +44,8 @@ public class MainMenuActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main_menu);
 
         String userPhoneNumber = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
+        recyclerView = findViewById(R.id.rv_usersList);
+
         root = FirebaseDatabase.getInstance();
 
         // check if the "users" child node exists
@@ -67,6 +83,41 @@ public class MainMenuActivity extends AppCompatActivity {
         };
         ref.addListenerForSingleValueEvent(eventListener);
 
+
+        // building the userList
+        ref = root.getReference().child("users");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot ds : snapshot.getChildren()) {
+                    // for handling the null value user which is added by default in the above code
+                    if (ds.getKey().equals("null user")) {
+                        continue;
+                    }
+                    String name = ds.child("name").getValue().toString();
+                    String bloodGroup = ds.child("bloodGroup").getValue().toString();
+                    String gender = ds.child("gender").getValue().toString();
+                    int age = Integer.parseInt(ds.child("age").getValue().toString());
+                    String state = ds.child("state").getValue().toString();
+                    String phoneNumber = ds.child("phoneNumber").getValue().toString();
+
+                    usersList.add(new UserProfile(name, bloodGroup, phoneNumber, age, state, gender));
+                    recyclerViewAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        // Setting up the recycler view
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerViewAdapter = new RecyclerViewAdapter(usersList, MainMenuActivity.this);
+        recyclerView.setAdapter(recyclerViewAdapter);
     }
 
     @Override
