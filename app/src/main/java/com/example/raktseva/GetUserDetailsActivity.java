@@ -2,6 +2,7 @@ package com.example.raktseva;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
@@ -36,11 +38,14 @@ public class GetUserDetailsActivity extends AppCompatActivity {
     private Spinner spinner_bloodGroup, spinner_state;
     private RadioGroup rg_gender;
     private RadioButton rb_gender;
+    private SwitchCompat switch_donor;
+    private Button bt_save_details;
 
     ArrayList<String> bloodGroupList, stateList;
     ArrayAdapter<String> bloodGroupSpinnerAdapter, stateSpinnerAdapter;
 
     private String userName, userState, userBloodGroup, userPhoneNumber, userGender;
+    private boolean userDonor;
     private int userAge;
 
     FirebaseAuth mAuth;
@@ -60,11 +65,16 @@ public class GetUserDetailsActivity extends AppCompatActivity {
         np_age = findViewById(R.id.np_age);
         spinner_bloodGroup = findViewById(R.id.spinner_bloodGroup);
         rg_gender = findViewById(R.id.rg_gender);
+        bt_save_details = findViewById(R.id.bt_save_details);
+        switch_donor = findViewById(R.id.switch_donor);
 
         // setting up the number picker
         np_age.setMinValue(1);
         np_age.setMaxValue(100);
         np_age.setValue(1);
+
+        // setting up the donor switch
+        switch_donor.setChecked(false);
 
         // Adding blood groups to the spinner array
         bloodGroupList = new ArrayList<>(Arrays.asList("A+", "O+", "B+", "AB+", "A-", "O-", "B-", "AB-"));
@@ -171,6 +181,14 @@ public class GetUserDetailsActivity extends AppCompatActivity {
             // enter details for new user
 
         }
+
+        // saving the user details on click save button
+        bt_save_details.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveUser();
+            }
+        });
     }
 
     // removing the menu
@@ -195,7 +213,7 @@ public class GetUserDetailsActivity extends AppCompatActivity {
     private void saveUser() {
         if (allDetailsValid()) {
             // proceed to add user
-            UserProfile userProfile = new UserProfile(userName, userBloodGroup, userPhoneNumber, userAge, userState, userGender);
+            UserProfile userProfile = new UserProfile(userName, userBloodGroup, userPhoneNumber, userAge, userState, userGender, userDonor);
             root = FirebaseDatabase.getInstance();
             reference = root.getReference("users");
             reference.child(userPhoneNumber).setValue(userProfile);
@@ -226,6 +244,9 @@ public class GetUserDetailsActivity extends AppCompatActivity {
 
         // get user age
         userAge = np_age.getValue();
+
+        // get donor or not
+        userDonor = switch_donor.isChecked();
 
         // get user phone number
         userPhoneNumber = mAuth.getCurrentUser().getPhoneNumber();

@@ -94,15 +94,19 @@ public class MainMenuActivity extends AppCompatActivity {
                     if (ds.getKey().equals("null user")) {
                         continue;
                     }
-                    String name = ds.child("name").getValue().toString();
-                    String bloodGroup = ds.child("bloodGroup").getValue().toString();
-                    String gender = ds.child("gender").getValue().toString();
-                    int age = Integer.parseInt(ds.child("age").getValue().toString());
-                    String state = ds.child("state").getValue().toString();
-                    String phoneNumber = ds.child("phoneNumber").getValue().toString();
+                    // if the user is a donor then add him to the usersList
+                    if (Boolean.parseBoolean(ds.child("donor").getValue().toString())) {
+                        String name = ds.child("name").getValue().toString();
+                        String bloodGroup = ds.child("bloodGroup").getValue().toString();
+                        String gender = ds.child("gender").getValue().toString();
+                        int age = Integer.parseInt(ds.child("age").getValue().toString());
+                        String state = ds.child("state").getValue().toString();
+                        String phoneNumber = ds.child("phoneNumber").getValue().toString();
+                        boolean isDonor = Boolean.parseBoolean(ds.child("donor").getValue().toString());
 
-                    usersList.add(new UserProfile(name, bloodGroup, phoneNumber, age, state, gender));
-                    recyclerViewAdapter.notifyDataSetChanged();
+                        usersList.add(new UserProfile(name, bloodGroup, phoneNumber, age, state, gender, isDonor));
+                        recyclerViewAdapter.notifyDataSetChanged();
+                    }
                 }
             }
 

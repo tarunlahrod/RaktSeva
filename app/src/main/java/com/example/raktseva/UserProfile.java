@@ -12,17 +12,28 @@ public class UserProfile {
     private int age;
     private String state;
     private String gender;
+    private boolean donor;
+
+    public boolean isDonor() {
+        return donor;
+    }
+
+    public void setDonor(boolean donor) {
+        this.donor = donor;
+    }
+
     public UserProfile() {
 
     }
 
-    public UserProfile(String name, String bloodGroup, String phoneNumber, int age, String state, String gender) {
+    public UserProfile(String name, String bloodGroup, String phoneNumber, int age, String state, String gender, boolean donor) {
         this.name = name;
         this.bloodGroup = bloodGroup;
         this.phoneNumber = phoneNumber;
         this.age = age;
         this.state = state;
         this.gender = gender;
+        this.donor = donor;
     }
 
     public String getName() {
@@ -82,6 +93,7 @@ public class UserProfile {
                 ", age=" + age +
                 ", state='" + state + '\'' +
                 ", gender='" + gender + '\'' +
+                ", donor=" + donor +
                 '}';
     }
 }
