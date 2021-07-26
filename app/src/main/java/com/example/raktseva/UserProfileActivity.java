@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -66,8 +67,8 @@ public class UserProfileActivity extends AppCompatActivity {
             // from the received intent. Rest work will be done after the if-else statement
             myProfile = false;
 
-            // remove the update profile button
-            btn_updateProfile.setVisibility(View.INVISIBLE);
+            // change the text on the button to "Call"
+            btn_updateProfile.setText("Call");
         }
         else {
             // My own profile
@@ -75,11 +76,23 @@ public class UserProfileActivity extends AppCompatActivity {
             myProfile = true;
         }
 
+        // Button to update personal details (of my profile, obviously)
         btn_updateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // move to edit profile activity
-
+                if (myProfile) {
+                    // move to edit profile activity
+                    Intent intent = new Intent(UserProfileActivity.this, GetUserDetailsActivity.class);
+                    intent.putExtra("flag", 1);
+                    startActivity(intent);
+                }
+                else {
+                    // make a phone call
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                    Log.i("check", "onClick: " + userPhoneNumber);
+                    callIntent.setData(Uri.parse("tel:" + userPhoneNumber));
+                    startActivity(callIntent);
+                }
             }
         });
 
@@ -89,7 +102,6 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-
                     userName = snapshot.child("name").getValue().toString();
                     userAge = snapshot.child("age").getValue().toString() + " Yrs";
                     userBloodGroup = snapshot.child("bloodGroup").getValue().toString();

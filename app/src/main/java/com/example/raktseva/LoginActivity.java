@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,6 +52,11 @@ public class LoginActivity extends AppCompatActivity {
         et_otp = findViewById(R.id.et_otp);
         progressBar = findViewById(R.id.progressBar);
 
+
+        // make the verify button and verification code edit text un-clickable
+        et_otp.setEnabled(false);
+        bt_verify.setEnabled(false);
+
         progressBar.setVisibility(View.INVISIBLE);
 
         bt_get_otp.setOnClickListener(new View.OnClickListener() {
@@ -59,6 +66,11 @@ public class LoginActivity extends AppCompatActivity {
                 if (phoneNumber.length() == 10) {
                     phoneNumber = "+91" + phoneNumber;
                     sendVerificationCodeToUser(phoneNumber);
+
+                    // make the verify button and verification code edit text clickable
+                    et_otp.setEnabled(true);
+                    bt_verify.setEnabled(true);
+
                 }
                 else {
                     Toast.makeText(LoginActivity.this, "Enter a valid phone number", Toast.LENGTH_SHORT).show();
@@ -135,6 +147,7 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in failed, display a message and update the UI
                             Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             progressBar.setVisibility(View.INVISIBLE);
+                            Log.i("hououin", "onComplete: here");
                         }
                     }
                 });

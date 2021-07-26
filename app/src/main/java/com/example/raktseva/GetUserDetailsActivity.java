@@ -20,8 +20,11 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,29 +107,93 @@ public class GetUserDetailsActivity extends AppCompatActivity {
 
             }
         });
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.get_user_activity_menu, menu);
-        return true;
-    }
+        // Catching the intent for updating the activity
+        Intent intent = getIntent();
+        int flag = intent.getIntExtra("flag", -1);
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_item_save_user_details: 
-                // perform save operation
-                saveUser();
-                break;
+        if (flag == 1) {
+            // setting up the spinners to have the values of existing users
+
+            ArrayAdapter<String> adapterBlood = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, bloodGroupList);
+            adapterBlood.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner_bloodGroup.setAdapter(adapterBlood);
+
+            ArrayAdapter<String> adapterState = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, stateList);
+            adapterState.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner_state.setAdapter(adapterState);
+
+            // edit details for existing user
+            userPhoneNumber = mAuth.getCurrentUser().getPhoneNumber();
+            root = FirebaseDatabase.getInstance();
+            reference = root.getReference("users").child(userPhoneNumber);
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    userName = snapshot.child("name").getValue().toString();
+                    userAge = Integer.parseInt(snapshot.child("age").getValue().toString());
+                    userBloodGroup = snapshot.child("bloodGroup").getValue().toString();
+                    userGender = snapshot.child("gender").getValue().toString();
+                    userState = snapshot.child("state").getValue().toString();
+
+                    // setting the name
+                    et_userName.setText(userName);
+
+                    // setting the age
+                    np_age.setValue(userAge);
+
+                    // setting up the spinners (contd.)
+                    String compareValueBlood = userBloodGroup;
+                    if (compareValueBlood != null) {
+                        int spinnerPosition = adapterBlood.getPosition(compareValueBlood);
+                        spinner_bloodGroup.setSelection(spinnerPosition);
+                    };
+                    String compareValueState = userState;
+                    if (compareValueState != null) {
+                        int spinnerPosition = adapterState.getPosition(compareValueState);
+                        spinner_state.setSelection(spinnerPosition);
+                    };
+
+                    switch (userGender) {
+                        case "Male": findViewById(R.id.rb_male).setEnabled(true); break;
+                        case "Female": findViewById(R.id.rb_female).setSelected(true); break;
+                        case "Non Binary": findViewById(R.id.rb_nb).setSelected(true); break;
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+        } else {
+            // enter details for new user
+
         }
-        return super.onOptionsItemSelected(item);
     }
+
+    // removing the menu
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.get_user_activity_menu, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+//        switch (item.getItemId()) {
+//            case R.id.menu_item_save_user_details:
+//                // perform save operation
+//                saveUser();
+//                break;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     private void saveUser() {
         if (allDetailsValid()) {
-
             // proceed to add user
             UserProfile userProfile = new UserProfile(userName, userBloodGroup, userPhoneNumber, userAge, userState, userGender);
             root = FirebaseDatabase.getInstance();
@@ -148,6 +215,12 @@ public class GetUserDetailsActivity extends AppCompatActivity {
 
         // get gender
         int radioId = rg_gender.getCheckedRadioButtonId();
+        if (radioId == -1) {
+            Toast.makeText(this, "Select gender", Toast.LENGTH_SHORT).show();
+            rg_gender.setFocusable(true);
+            rg_gender.requestFocus();
+            return false;
+        }
         rb_gender = findViewById(radioId);
         userGender = rb_gender.getText().toString();
 
