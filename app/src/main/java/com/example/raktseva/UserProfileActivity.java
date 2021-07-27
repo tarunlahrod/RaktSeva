@@ -77,6 +77,9 @@ public class UserProfileActivity extends AppCompatActivity {
 
             // hide the donor switch
             switchDonor.setVisibility(View.GONE);
+
+            // hide delete profile button
+            btn_deleteProfile.setVisibility(View.GONE);
         }
         else {
             // My own profile
