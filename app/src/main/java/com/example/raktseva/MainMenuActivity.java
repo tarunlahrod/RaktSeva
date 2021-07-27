@@ -33,8 +33,7 @@ public class MainMenuActivity extends AppCompatActivity {
     List<UserProfile> usersList = new ArrayList<UserProfile>();
 
     private RecyclerView recyclerView;
-    private RecyclerView.ViewHolder viewHolder;
-    private RecyclerView.Adapter recyclerViewAdapter;
+    public RecyclerView.Adapter recyclerViewAdapter;
     private RecyclerView.LayoutManager layoutManager;
 
 
@@ -42,6 +41,7 @@ public class MainMenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+        getSupportActionBar().setTitle("Available Donors");
 
         String userPhoneNumber = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
         recyclerView = findViewById(R.id.rv_usersList);
@@ -86,7 +86,7 @@ public class MainMenuActivity extends AppCompatActivity {
 
         // building the userList
         ref = root.getReference().child("users");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for (DataSnapshot ds : snapshot.getChildren()) {
