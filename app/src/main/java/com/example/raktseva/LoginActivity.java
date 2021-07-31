@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -30,8 +32,11 @@ import java.util.concurrent.TimeUnit;
 public class LoginActivity extends AppCompatActivity {
 
     Button bt_get_otp, bt_verify;
+    TextView tv_countdown_timer;
     EditText et_phone, et_otp;
     ProgressBar progressBar;
+    CountDownTimer countDownTimer;
+    long timeLeftMilliseconds = 60000; // 60 seconds
 
     private FirebaseAuth mAuth;
     String codeSent;
@@ -51,12 +56,15 @@ public class LoginActivity extends AppCompatActivity {
         et_phone = findViewById(R.id.et_phone);
         et_otp = findViewById(R.id.et_otp);
         progressBar = findViewById(R.id.progressBar);
+        tv_countdown_timer = findViewById(R.id.tv_countdown_timer);
 
 
         // make the verify button and verification code edit text un-clickable
         et_otp.setEnabled(false);
         bt_verify.setEnabled(false);
 
+        // hide the countdown timer and progress bar
+        tv_countdown_timer.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.INVISIBLE);
 
         bt_get_otp.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +79,13 @@ public class LoginActivity extends AppCompatActivity {
                     et_otp.setEnabled(true);
                     bt_verify.setEnabled(true);
 
+                    // disable the get otp button
+                    bt_get_otp.setEnabled(false);
+                    et_phone.setEnabled(false);
+
+                    // start the countdown timer and make it visible
+                    tv_countdown_timer.setVisibility(View.VISIBLE);
+                    startCountDownTimer();
                 }
                 else {
                     Toast.makeText(LoginActivity.this, "Enter a valid phone number", Toast.LENGTH_SHORT).show();
@@ -93,6 +108,41 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void startCountDownTimer() {
+        countDownTimer = new CountDownTimer(timeLeftMilliseconds, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+
+                timeLeftMilliseconds = millisUntilFinished;
+
+                // update the countdown timer
+                int minutes = (int) timeLeftMilliseconds / 60000;
+                int seconds = (int) (timeLeftMilliseconds % 60000) / 1000;
+
+                String timeLeft = "" + minutes + ":";
+                if (seconds < 10)
+                    timeLeft += "0";
+
+                timeLeft += seconds;
+
+                tv_countdown_timer.setText("Resend verification code in \n" + timeLeft);
+            }
+
+            @Override
+            public void onFinish() {
+                // once the countdown timer is finished, disable the verify otp button
+                // and hide the countdown timer
+                bt_verify.setEnabled(false);
+                et_otp.setEnabled(false);
+                tv_countdown_timer.setVisibility(View.INVISIBLE);
+
+                // enable the phone edit text and get otp button
+                et_phone.setEnabled(true);
+                bt_get_otp.setEnabled(true);
+            }
+        }.start();
     }
 
     private void sendVerificationCodeToUser(String phoneNumber) {

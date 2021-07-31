@@ -8,6 +8,17 @@
 
     tools:context=".LoginActivity">
 
+    <TextView
+        android:id="@+id/tv_countdown_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1:00"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/cardView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
@@ -43,9 +54,9 @@
                         android:id="@+id/et_phone"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="phone"
                         android:drawableLeft="@drawable/ic_baseline_call_24"
-                        android:drawablePadding="10dp"/>
+                        android:drawablePadding="10dp"
+                        android:inputType="phone" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -64,16 +75,16 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter OTP"
-                    android:layout_marginTop="16dp">
+                    android:layout_marginTop="16dp"
+                    android:hint="Enter OTP">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/et_otp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="number"
                         android:drawableLeft="@drawable/ic_baseline_code_24"
-                        android:drawablePadding="10dp"/>
+                        android:drawablePadding="10dp"
+                        android:inputType="number" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -102,7 +113,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         </RelativeLayout>
-
 
 
     </androidx.cardview.widget.CardView>

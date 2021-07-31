@@ -37,7 +37,7 @@ public class GetUserDetailsActivity extends AppCompatActivity {
     private NumberPicker np_age;
     private Spinner spinner_bloodGroup, spinner_state;
     private RadioGroup rg_gender;
-    private RadioButton rb_gender;
+    private RadioButton rb_gender, rb_male, rb_female, rb_non_binary;
     private SwitchCompat switch_donor;
     private Button bt_save_details;
 
@@ -65,6 +65,9 @@ public class GetUserDetailsActivity extends AppCompatActivity {
         np_age = findViewById(R.id.np_age);
         spinner_bloodGroup = findViewById(R.id.spinner_bloodGroup);
         rg_gender = findViewById(R.id.rg_gender);
+        rb_male = findViewById(R.id.rb_male);
+        rb_female = findViewById(R.id.rb_female);
+        rb_non_binary = findViewById(R.id.rb_nb);
         bt_save_details = findViewById(R.id.bt_save_details);
         switch_donor = findViewById(R.id.switch_donor);
 
@@ -123,6 +126,7 @@ public class GetUserDetailsActivity extends AppCompatActivity {
         int flag = intent.getIntExtra("flag", -1);
 
         if (flag == 1) {
+
             // setting up the spinners to have the values of existing users
 
             ArrayAdapter<String> adapterBlood = new ArrayAdapter<String>(this, R.layout.support_simple_spinner_dropdown_item, bloodGroupList);
@@ -145,12 +149,25 @@ public class GetUserDetailsActivity extends AppCompatActivity {
                     userBloodGroup = snapshot.child("bloodGroup").getValue().toString();
                     userGender = snapshot.child("gender").getValue().toString();
                     userState = snapshot.child("state").getValue().toString();
+                    userDonor = Boolean.parseBoolean(snapshot.child("donor").getValue().toString());
 
                     // setting the name
                     et_userName.setText(userName);
 
                     // setting the age
                     np_age.setValue(userAge);
+
+                    // setting up the donor switch
+                    switch_donor.setChecked(userDonor);
+
+                    // setting up the gender radio group
+                    if (userGender.equals("Male")) {
+                        rb_male.setChecked(true);
+                    } else if (userGender.equals("Female")) {
+                            rb_female.setChecked(true);
+                    } else {
+                        rb_non_binary.setChecked(true);
+                    }
 
                     // setting up the spinners (contd.)
                     String compareValueBlood = userBloodGroup;
