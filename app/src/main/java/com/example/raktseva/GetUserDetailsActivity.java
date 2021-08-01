@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
@@ -40,6 +41,7 @@ public class GetUserDetailsActivity extends AppCompatActivity {
     private RadioButton rb_gender, rb_male, rb_female, rb_non_binary;
     private SwitchCompat switch_donor;
     private Button bt_save_details;
+    private CheckBox cb_user_agreement;
 
     ArrayList<String> bloodGroupList, stateList;
     ArrayAdapter<String> bloodGroupSpinnerAdapter, stateSpinnerAdapter;
@@ -70,6 +72,7 @@ public class GetUserDetailsActivity extends AppCompatActivity {
         rb_non_binary = findViewById(R.id.rb_nb);
         bt_save_details = findViewById(R.id.bt_save_details);
         switch_donor = findViewById(R.id.switch_donor);
+        cb_user_agreement = findViewById(R.id.cb_user_agreement);
 
         // setting up the number picker
         np_age.setMinValue(1);
@@ -126,6 +129,11 @@ public class GetUserDetailsActivity extends AppCompatActivity {
         int flag = intent.getIntExtra("flag", -1);
 
         if (flag == 1) {
+
+            // Edit user details
+
+            // hide the agreement check box
+            cb_user_agreement.setVisibility(View.GONE);
 
             // setting up the spinners to have the values of existing users
 
@@ -197,6 +205,8 @@ public class GetUserDetailsActivity extends AppCompatActivity {
         } else {
             // enter details for new user
 
+            // show the agreement check box
+            cb_user_agreement.setVisibility(View.VISIBLE);
         }
 
         // saving the user details on click save button
@@ -207,25 +217,6 @@ public class GetUserDetailsActivity extends AppCompatActivity {
             }
         });
     }
-
-    // removing the menu
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.get_user_activity_menu, menu);
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//        switch (item.getItemId()) {
-//            case R.id.menu_item_save_user_details:
-//                // perform save operation
-//                saveUser();
-//                break;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
     private void saveUser() {
         if (allDetailsValid()) {
@@ -245,6 +236,7 @@ public class GetUserDetailsActivity extends AppCompatActivity {
         userName = et_userName.getText().toString();
         if (userName.isEmpty()) {
             Toast.makeText(this, "Enter name", Toast.LENGTH_SHORT).show();
+            et_userName.requestFocus();
             return false;
         }
 
@@ -267,6 +259,16 @@ public class GetUserDetailsActivity extends AppCompatActivity {
 
         // get user phone number
         userPhoneNumber = mAuth.getCurrentUser().getPhoneNumber();
+
+        // if new user, agreement should be checked
+        if (cb_user_agreement.getVisibility() == View.VISIBLE) {
+            // if not checked, ask to check
+            if (cb_user_agreement.isChecked() == false) {
+                Toast.makeText(GetUserDetailsActivity.this, "Agree to share details", Toast.LENGTH_SHORT).show();
+                cb_user_agreement.requestFocus(View.FOCUS_DOWN);
+                return false;
+            }
+        }
 
         // if all details are valid, return true and proceed to save data
         return true;
