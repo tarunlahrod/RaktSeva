@@ -1,9 +1,11 @@
 package com.example.raktseva;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,7 +44,7 @@ public class UserProfileActivity extends AppCompatActivity {
     DatabaseReference ref;
     String userName, userAge, userBloodGroup, userGender, userState, userPhoneNumber;
     Boolean myProfile, userDonor;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,14 +84,13 @@ public class UserProfileActivity extends AppCompatActivity {
 
             // hide delete profile button
             btn_deleteProfile.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             // My own profile
             userPhoneNumber = FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber();
             myProfile = true;
             switchDonor.setVisibility(View.VISIBLE);
         }
-        
+
         // donor switch listener
         switchDonor.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -97,7 +100,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 ref.child("donor").setValue(isChecked);
             }
         });
-        
+
         // Button to update personal details (of my profile, obviously)
         btn_updateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,8 +110,7 @@ public class UserProfileActivity extends AppCompatActivity {
                     Intent intent = new Intent(UserProfileActivity.this, GetUserDetailsActivity.class);
                     intent.putExtra("flag", 1);
                     startActivity(intent);
-                }
-                else {
+                } else {
                     // make a phone call
                     Intent callIntent = new Intent(Intent.ACTION_DIAL);
                     Log.i("check", "onClick: " + userPhoneNumber);
@@ -144,8 +146,7 @@ public class UserProfileActivity extends AppCompatActivity {
                     if (myProfile) {
                         if (userDonor) {
                             switchDonor.setChecked(true);
-                        }
-                        else {
+                        } else {
                             switchDonor.setChecked(false);
                         }
                     }
@@ -170,16 +171,32 @@ public class UserProfileActivity extends AppCompatActivity {
         btn_deleteProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteUser();
+                AlertDialog.Builder builder = new AlertDialog.Builder(UserProfileActivity.this);
+                builder.setTitle("Delete profile");
+                builder.setMessage("All your data will be deleted. Do you want to proceed?");
+                builder.setCancelable(false);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteUser();
+                        finish();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
             }
         });
     }
 
     private void deleteUser() {
 
-        // after deleting the user, we must sign him out
+        // first we delete the data of the user
 
-        // delete the user
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("users").child(userPhoneNumber);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -195,16 +212,22 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
-        // move back to main activity
-        Intent intent = new Intent(UserProfileActivity.this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
-
-        // now sign out
-        FirebaseAuth.getInstance().signOut();
-
-        Toast.makeText(getApplicationContext(),"Account deleted", Toast.LENGTH_SHORT).show();
+        // now we delete the user and move back to login activity
+        FirebaseAuth.getInstance().getCurrentUser().delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Account deleted", Toast.LENGTH_SHORT).show();
+                    // move back to login activity
+                    Intent intent = new Intent(UserProfileActivity.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+                else
+                    Toast.makeText(UserProfileActivity.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void makeEditTextBehaveAsTextView(TextInputEditText textInputEditText) {
